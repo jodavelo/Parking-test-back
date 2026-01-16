@@ -20,25 +20,25 @@ API REST para gestión de entrada y salida de vehículos en estacionamiento.
 
 ```
 Parking/
-??? API/
-?   ??? Controllers/
-?   ??? Middleware/
-??? Application/
-?   ??? Commands/
-?   ??? Queries/
-?   ??? Validators/
-?   ??? Behaviors/
-??? Domain/
-?   ??? Entities/
-?   ??? Exceptions/
-?   ??? Interfaces/
-??? Infrastructure/
-    ??? Data/
-    ??? Repositories/
+|-- API/
+|   |-- Controllers/
+|   |-- Middleware/
+|-- Application/
+|   |-- Commands/
+|   |-- Queries/
+|   |-- Validators/
+|   |-- Behaviors/
+|-- Domain/
+|   |-- Entities/
+|   |-- Exceptions/
+|   |-- Interfaces/
+|-- Infrastructure/
+    |-- Data/
+    |-- Repositories/
 
 Parking.Tests/
-??? ProcessAccessCommandHandlerTests.cs
-??? ConcurrencyTests.cs
+|-- ProcessAccessCommandHandlerTests.cs
+|-- ConcurrencyTests.cs
 ```
 
 ## Configuración
