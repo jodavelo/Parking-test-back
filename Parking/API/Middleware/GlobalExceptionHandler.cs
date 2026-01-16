@@ -9,11 +9,13 @@ public class GlobalExceptionHandler
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<GlobalExceptionHandler> _logger;
+    private readonly IHostEnvironment _env;
 
-    public GlobalExceptionHandler(RequestDelegate next, ILogger<GlobalExceptionHandler> logger)
+    public GlobalExceptionHandler(RequestDelegate next, ILogger<GlobalExceptionHandler> logger, IHostEnvironment env)
     {
         _next = next;
         _logger = logger;
+        _env = env;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -65,17 +67,12 @@ public class GlobalExceptionHandler
             _ => (
                 HttpStatusCode.InternalServerError,
                 "INTERNAL_ERROR",
-                "Ha ocurrido un error interno. Por favor, intente nuevamente.")
+                _env.IsDevelopment() 
+                    ? exception.Message 
+                    : "Ha ocurrido un error interno. Por favor, intente nuevamente.")
         };
 
-        if (statusCode == HttpStatusCode.InternalServerError)
-        {
-            _logger.LogError(exception, "Error no manejado: {Message}", exception.Message);
-        }
-        else
-        {
-            _logger.LogWarning("Excepcion controlada: {Code} - {Message}", errorCode, message);
-        }
+        _logger.LogError(exception, "Error: {Message}", exception.Message);
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;
@@ -84,7 +81,8 @@ public class GlobalExceptionHandler
             Error: message,
             Code: errorCode,
             StatusCode: (int)statusCode,
-            Timestamp: DateTime.UtcNow
+            Timestamp: DateTime.UtcNow,
+            Detail: _env.IsDevelopment() ? exception.StackTrace : null
         );
 
         var jsonOptions = new JsonSerializerOptions
@@ -100,5 +98,6 @@ public record ErrorResponse(
     string Error,
     string Code,
     int StatusCode,
-    DateTime Timestamp
+    DateTime Timestamp,
+    string? Detail = null
 );
